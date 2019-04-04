@@ -8,13 +8,13 @@ Install directly from the source with:
 
 .. code-block:: bash
 
-   $ pip install git+https://jira.iais.fraunhofer.de/stash/scm/meml/protein_vectors.git
+   $ pip install git+https://github.com/ratvec/ratvec.git
 
 Install in development mode with:
 
 .. code-block:: bash
 
-   $ git clone https://jira.iais.fraunhofer.de/stash/scm/meml/protein_vectors.git
+   $ git clone https://github.com/ratvec/ratvec.git
    $ cd ratvec
    $ pip install -e .
 
