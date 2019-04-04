@@ -1,6 +1,6 @@
 RatVec
 ======
-Generating dense embeddings for proteins using kernel PCA
+Generating dense embeddings for proteins using kernel PCA.
 
 Installation
 ------------
@@ -70,6 +70,7 @@ References
 ----------
 
 .. [1] Boutet, E. *et al.* (2016). `UniProtKB/Swiss-Prot, the manually annotated section of the UniProt KnowledgeBase:
-how to use the entry view. <https://doi.org/10.1007/978-1-4939-3167-5_2>`_. Plant Bioinformatics (pp. 23-54).
+   how to use the entry view. <https://doi.org/10.1007/978-1-4939-3167-5_2>`_. Plant Bioinformatics (pp. 23-54).
+
 .. [2] Asgari, E., & Mofrad, M. R. (2015). `Continuous distributed representation of biological sequences for deep
-proteomics and genomics <https://doi.org/10.1371/journal.pone.0141287>`_. PloS one, 10(11), e0141287.
+   proteomics and genomics <https://doi.org/10.1371/journal.pone.0141287>`_. PloS one, 10(11), e0141287.
