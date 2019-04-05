@@ -34,6 +34,10 @@ RatVec has four main commands: ``generate``, ``train``, ``evaluate`` and ``optim
 
 1. **Generate**. Downloads and prepare the SwissProt data set that is showcased in the RatVec paper.
 
+.. code-block:: bash
+
+   $ ratvec generate
+
 2. **Train**. Compute KPCA embeddings on a given data set. Please run the following command to see the arguments:
 
 .. code-block:: bash
