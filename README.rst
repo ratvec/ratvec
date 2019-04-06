@@ -1,6 +1,8 @@
 RatVec
 ======
-Generating dense embeddings for proteins using kernel PCA.
+This tool generates low-dimensional vector representations for non-numeric entities such as text or biological sequences (e.g. DNA or proteins) via kernel PCA with rational kernels. 
+
+The current implementation accepts any input dataset that can be read as a list of strings.
 
 Installation
 ------------
