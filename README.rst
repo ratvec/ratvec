@@ -1,6 +1,6 @@
 RatVec
 ======
-This tool generates low-dimensional vector representations for non-numeric entities such as text or biological sequences (e.g. DNA or proteins) via kernel PCA with rational kernels. 
+This tool generates low-dimensional continuous distributed vector representations for non-numeric entities such as text or biological sequences (e.g. DNA or proteins) via kernel PCA with rational kernels. 
 
 The current implementation accepts any input dataset that can be read as a list of strings.
 
@@ -52,13 +52,6 @@ RatVec has four main commands: ``generate``, ``train``, ``evaluate`` and ``optim
 .. code-block:: bash
 
    $ ratvec evaluate --help
-
-
-4. **Optimize**. Evaluate and optimize KPCA embeddings. Please run the following command to see the arguments:
-
-.. code-block:: bash
-
-   $ ratvec optimize --help
 
 
 Showcase Dataset
