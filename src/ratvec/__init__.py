@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""Protein Vectors."""
+"""RatVec."""
 
 from . import constants
