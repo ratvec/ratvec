@@ -18,7 +18,6 @@ Also see https://click.pocoo.org/latest/setuptools/
 import click
 
 from ratvec.evaluation import main as evaluate
-from ratvec.optimize import main as optimize
 from ratvec.protein_seq_reader import main as generate
 from ratvec.train import main as train, infer
 
@@ -27,7 +26,6 @@ main = click.Group(commands={
     'train': train,
     'infer': infer,
     'evaluate': evaluate,
-    'optimize': optimize,
 })
 
 if __name__ == '__main__':
