@@ -32,7 +32,7 @@ How to Use
 
    $ ratvec --help
 
-RatVec has four main commands: ``generate``, ``train``, ``evaluate`` and ``optimize``:
+RatVec has four main commands: ``generate``, ``train``, and ``evaluate``:
 
 1. **Generate**. Downloads and prepare the SwissProt data set that is showcased in the RatVec paper.
 
