@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""RatVec."""
+"""Generate dense embeddings for sequences using kernel PCA."""
 
 from . import constants

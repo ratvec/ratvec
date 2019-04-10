@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+"""Classifier models."""
+
 import numpy as np
 from sklearn import neighbors
 
@@ -11,19 +13,23 @@ __all__ = [
 class nearest_neighbor_classifier:
     """An efficient classifier for K-nearest neighbors when K is 1."""
 
-    def fit(self, X, Y):
+    def __init__(self):
+        self.tree = None
+        self.y_rep = None
+
+    def fit(self, x, y):
         """Fit."""
-        self.tree = neighbors.KDTree(X)
-        self.Y_rep = np.array(Y)
+        self.tree = neighbors.KDTree(x)
+        self.y_rep = np.array(y)
         return self
 
-    def score(self, X, Y):
+    def score(self, x, y):
         """Score."""
-        _, idx = self.tree.query(X, k=1)
-        Y_pred = self.Y_rep[idx]
-        return np.sum([Y_pred[i] == Y[i] for i in np.arange(Y_pred.shape[0])]) / len(Y)
+        _, idx = self.tree.query(x, k=1)
+        y_pred = self.y_rep[idx]
+        return np.sum([y_pred[i] == y[i] for i in np.arange(y_pred.shape[0])]) / len(y)
 
-    def predict(self, X):
+    def predict(self, x):
         """Predict."""
-        _, idx = self.tree.query(X, k=1)
-        return np.hstack(self.Y_rep[idx])
+        _, idx = self.tree.query(x, k=1)
+        return np.hstack(self.y_rep[idx])

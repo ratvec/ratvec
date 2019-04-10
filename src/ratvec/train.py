@@ -45,7 +45,7 @@ kernels = {
 
 ALLOWED_SIMILARITIES = [
     "ngram_sim",
-    # "sorensen_plus",  #TODO where did the implementation for this go
+    # "sorensen_plus",  # TODO where did the implementation for this go
     "ngram_intersec",
     'global-alignment',
 ]
@@ -82,16 +82,17 @@ def _preprocess_vocab_file(f):
 @click.option('--use-gpu', is_flag=True)
 @click.option('--processes', type=int, default=multiprocessing.cpu_count(), show_default=True,
               help="Number of processes to be started for computation")
-def main(full_vocab_file: str,
-         repr_vocab_file: str,
-         output: str,
-         n_components: int,
-         sim: str,
-         sim_alignment_matrix: str,
-         n_ngram: int,
-         use_gpu: bool,
-         processes: int,
-         ):
+def main(
+        full_vocab_file: str,
+        repr_vocab_file: str,
+        output: str,
+        n_components: int,
+        sim: str,
+        sim_alignment_matrix: str,
+        n_ngram: int,
+        use_gpu: bool,
+        processes: int,
+) -> None:
     """Compute KPCA embeddings on a given data set."""
     n = n_ngram  # meh
     output = os.path.abspath(output)
