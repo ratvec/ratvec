@@ -5,17 +5,24 @@ text or biological sequences (e.g. DNA or proteins) via kernel PCA with rational
 
 The current implementation accepts any input dataset that can be read as a list of strings.
 
-Installation
-------------
-Install directly from the source with:
+Installation |pypi_version| |python_versions| |pypi_license|
+------------------------------------------------------------
+RatVec can be installed on Python 3.6+ from `PyPI <https://pypi.python.org/pypi/ratvec>`_ with the following code in
+your favorite terminal:
 
-.. code-block:: bash
+.. code-block:: sh
+
+    $ pip install ratvec
+
+or from the latest code on `GitHub <https://github.com/ratvec/ratvec>`_ with:
+
+.. code-block:: sh
 
    $ pip install git+https://github.com/ratvec/ratvec.git
 
-Install in development mode with:
+It can be installed in development mode with:
 
-.. code-block:: bash
+.. code-block:: sh
 
    $ git clone https://github.com/ratvec/ratvec.git
    $ cd ratvec
@@ -69,3 +76,13 @@ References
 
 .. [2] Asgari, E., & Mofrad, M. R. (2015). `Continuous distributed representation of biological sequences for deep
    proteomics and genomics <https://doi.org/10.1371/journal.pone.0141287>`_. PloS one, 10(11), e0141287.
+
+
+.. |python_versions| image:: https://img.shields.io/pypi/pyversions/ratvec.svg
+    :alt: Python versions supported by RatVec
+
+.. |pypi_version| image:: https://img.shields.io/pypi/v/ratvec.svg
+    :alt: Current version of RatVec on PyPI
+
+.. |pypi_license| image:: https://img.shields.io/pypi/l/ratvec.svg
+    :alt: RatVec is distributed under the Apache 2.0 License
