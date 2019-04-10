@@ -1,6 +1,7 @@
 RatVec
 ======
-This tool generates low-dimensional continuous distributed vector representations for non-numeric entities such as text or biological sequences (e.g. DNA or proteins) via kernel PCA with rational kernels. 
+This tool generates low-dimensional, continuous, distributed vector representations for non-numeric entities such as
+text or biological sequences (e.g. DNA or proteins) via kernel PCA with rational kernels.
 
 The current implementation accepts any input dataset that can be read as a list of strings.
 
@@ -20,54 +21,49 @@ Install in development mode with:
    $ cd ratvec
    $ pip install -e .
 
-The `-e` dynamically links the code in the git repository to the Python site-packages so your changes get
+The ``-e`` dynamically links the code in the git repository to the Python site-packages so your changes get
 reflected immediately.
 
 How to Use
 ----------
+``ratvec`` automatically installs a command line interface. Check it out with:
 
-``ratvec`` is automatically installs a command line interface. Check it out with
-
-.. code-block:: bash
+.. code-block:: sh
 
    $ ratvec --help
 
-RatVec has four main commands: ``generate``, ``train``, and ``evaluate``:
+RatVec has three main commands: ``generate``, ``train``, and ``evaluate``:
 
 1. **Generate**. Downloads and prepare the SwissProt data set that is showcased in the RatVec paper.
 
-.. code-block:: bash
+.. code-block:: sh
 
    $ ratvec generate
 
 2. **Train**. Compute KPCA embeddings on a given data set. Please run the following command to see the arguments:
 
-.. code-block:: bash
+.. code-block:: sh
 
    $ ratvec train --help
 
-
 3. **Evaluate**. Evaluate and optimize KPCA embeddings. Please run the following command to see the arguments:
 
-.. code-block:: bash
+.. code-block:: sh
 
    $ ratvec evaluate --help
 
-
 Showcase Dataset
 ----------------
+The application presented in the paper (SwissProt dataset [1]_ used by Boutet *et al.* [2]_) can be downloaded directly
+from `here <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/JMFHTN>`_ or running the following
+command:
 
-The application presented in the paper (SwissProt dataset [1] used by Boutet *et al.* [2]) can be downloaded directly from
-the following website https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/JMFHTN or by simply
-running the ``generate`` command:
-
-.. code-block:: bash
+.. code-block:: sh
 
    $ ratvec generate
 
 References
 ----------
-
 .. [1] Boutet, E. *et al.* (2016). `UniProtKB/Swiss-Prot, the manually annotated section of the UniProt KnowledgeBase:
    how to use the entry view. <https://doi.org/10.1007/978-1-4939-3167-5_2>`_. Plant Bioinformatics (pp. 23-54).
 
