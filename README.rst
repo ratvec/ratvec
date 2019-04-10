@@ -69,6 +69,15 @@ command:
 
    $ ratvec generate
 
+Making a Release
+----------------
+Most of the release workflow is automated by ``tox``. After `configuring <https://truveris.github.io/articles/configuring-pypirc/>`_
+an appropriate ``.pypirc`` file, the command ``tox -e finish`` can be run. It takes the ``-dev`` extension off of the
+version string, pushes to GitHub, makes a distribution, uploads it to PyPI, then bumps the version to the next patch.
+
+Note: there can't be any uncommitted stuff in the repository first or bumpversion will complain.
+``tox -e bumpversion minor`` can be used to bump the minor version before running ``tox -e finish``.
+
 References
 ----------
 .. [1] Boutet, E. *et al.* (2016). `UniProtKB/Swiss-Prot, the manually annotated section of the UniProt KnowledgeBase:
