@@ -12,12 +12,7 @@ from random import shuffle
 import click
 import numpy as np
 
-from ratvec.constants import (
-    DATA_DIRECTORY,
-    make_data_directory,
-    PROTEIN_FAMILY_METADATA,
-    PROTEIN_FAMILY_SEQUENCES
-)
+from ratvec.constants import DATA_DIRECTORY, PROTEIN_FAMILY_METADATA, PROTEIN_FAMILY_SEQUENCES
 from ratvec.utils import download_protein_files, make_ratvec, secho
 
 __all__ = [
@@ -35,14 +30,13 @@ __all__ = [
 @click.option('-f', '--force', is_flag=True)
 def main(directory: str, force: bool):
     """Generate the protein vocabularies."""
-    # Ensure data directory exists
-    make_data_directory()
+    os.makedirs(directory, exist_ok=True)
 
     sequences_path = os.path.join(directory, PROTEIN_FAMILY_SEQUENCES)
     metadata_path = os.path.join(directory, PROTEIN_FAMILY_METADATA)
 
-    if not force and os.path.isfile(sequences_path) and os.path.isfile(metadata_path):
-        secho(f"Files are already existing in {directory}. Use --force to re-compute.")
+    if not force and os.path.exists(sequences_path) and os.path.exists(metadata_path):
+        secho(f"Files are already exist in {directory}. Use --force to re-compute.")
         sys.exit(0)
 
     secho(f"Downloading files from the internet. Please be patient.")
