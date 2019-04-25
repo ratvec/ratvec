@@ -91,6 +91,7 @@ References
     :alt: Python versions supported by RatVec
 
 .. |pypi_version| image:: https://img.shields.io/pypi/v/ratvec.svg
+    :target: https://pypi.python.org/pypi/ratvec
     :alt: Current version of RatVec on PyPI
 
 .. |pypi_license| image:: https://img.shields.io/pypi/l/ratvec.svg
