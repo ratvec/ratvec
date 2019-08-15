@@ -11,7 +11,7 @@ import pickle
 from functools import partial
 from math import ceil
 from typing import Any, Callable, List
-
+from bitstring import BitArray
 import Bio.SubsMat.MatrixInfo
 import click
 import numpy as np
@@ -48,6 +48,7 @@ ALLOWED_SIMILARITIES = [
     # "sorensen_plus",  # TODO where did the implementation for this go
     "ngram_intersec",
     'global-alignment',
+    "tanimoto"
 ]
 
 
@@ -71,9 +72,9 @@ def _preprocess_vocab_file(f):
               help="Number of principal components of the embeddings. "
                    "If not specified, defaults to 2/3 the size of the representative vocabulary")
 @click.option('--sim', type=click.Choice(ALLOWED_SIMILARITIES),
-              default="ngram_intersec", show_default=True,
+              default="tanimoto", show_default=True,
               help="Similarity function: 'ngram_sim' (n-gram similarity),'sorensen_plus' "
-                   "(Sørensen–Dice index for n-grams)")
+                   "(Sørensen–Dice index for n-grams), 'tanimoto'")
 @click.option('--sim-alignment-matrix', type=click.Choice(Bio.SubsMat.MatrixInfo.available_matrices),
               default='blosum62', show_default=True,
               help="Similarity matrix to use with --sim==global-alignment")
@@ -139,6 +140,10 @@ def main(
             tqdm_desc=f'{EMOJI} Computing similarity matrix between '
                       f'full/repr vocab with global alignment ({sim_alignment_matrix})'
         )
+    elif sim == "tanimoto":
+        secho(f'Computing similarities with {sim}')
+        repr_similarity_matrix = compute_similarity_matrix_bitmap(repr_vocab,repr_vocab)
+        full_similarity_matrix = compute_similarity_matrix_bitmap(repr_vocab, full_vocab)
     else:
         alphabet = set(itt.chain.from_iterable(repr_vocab))
         alphabet.add(" ")
@@ -362,6 +367,31 @@ def compute_splits(
         elements[index * split_size: (index + 1) * split_size]
         for index in it
     ]
+
+def tanimoto(a: BitArray, b:BitArray):
+    return (a & b).count(value=True) / (a | b).count(value=True)
+
+def compute_similarity_matrix_bitmap(
+        repr_vocab,
+        full_vocab,
+        sim = "tanimoto",
+) -> np.ndarray:
+    """
+
+    :param repr_vocab:
+    :param full_vocab:
+    :param sim:
+    :return:
+    """
+
+    repr_bitarrays = [BitArray(bin=s) for s in repr_vocab]
+
+    vocab_bitarrays = [BitArray(bin=s) for s in full_vocab]
+
+    if sim == "tanimoto":
+        return np.hstack([tanimoto(a,b) for a in vocab_bitarrays for b in repr_bitarrays]).reshape(len(full_vocab), len(repr_vocab))
+
+    return None
 
 
 def get_ngram_elements(*, repr_vocab, full_vocab, n: int, ngram_to_index):
