@@ -142,8 +142,8 @@ def main(
         )
     elif sim == "tanimoto":
         secho(f'Computing similarities with {sim}')
-        repr_similarity_matrix = compute_similarity_matrix_bitmap(repr_vocab,repr_vocab)
-        full_similarity_matrix = compute_similarity_matrix_bitmap(repr_vocab, full_vocab)
+        repr_similarity_matrix = compute_similarity_matrix_bitmap(repr_vocab, repr_vocab, processes=processes)
+        full_similarity_matrix = compute_similarity_matrix_bitmap(repr_vocab, full_vocab, processes=processes)
     else:
         alphabet = set(itt.chain.from_iterable(repr_vocab))
         alphabet.add(" ")
@@ -368,13 +368,13 @@ def compute_splits(
         for index in it
     ]
 
-def tanimoto(a: BitArray, b:BitArray):
-    return (a & b).count(value=True) / (a | b).count(value=True)
+
 
 def compute_similarity_matrix_bitmap(
         repr_vocab,
         full_vocab,
         sim = "tanimoto",
+        processes=1
 ) -> np.ndarray:
     """
 
@@ -383,15 +383,26 @@ def compute_similarity_matrix_bitmap(
     :param sim:
     :return:
     """
-
+    from ratvec.similarity import tanimoto_list
+#TODO parallelize this function
     repr_bitarrays = [BitArray(bin=s) for s in repr_vocab]
 
     vocab_bitarrays = [BitArray(bin=s) for s in full_vocab]
+    #    if sim == "tanimoto":
+    #        return np.hstack([tanimoto(a,b) for a in tqdm(vocab_bitarrays) for b in repr_bitarrays]).reshape(len(full_vocab), len(repr_vocab))
+    #
+    #    return None
+    secho(f"Splitting data for computing similarities in {processes} processes")
 
-    if sim == "tanimoto":
-        return np.hstack([tanimoto(a,b) for a in vocab_bitarrays for b in repr_bitarrays]).reshape(len(full_vocab), len(repr_vocab))
+    return _calculate_similarity_matrix_parallel(
+        full_vocab=full_vocab,
+        repr_vocab=repr_vocab,
+        processes=processes,
+        elements=list(itt.product(vocab_bitarrays, repr_bitarrays)),
+        compute_similarities_on_splits=tanimoto_list
+    )
 
-    return None
+
 
 
 def get_ngram_elements(*, repr_vocab, full_vocab, n: int, ngram_to_index):
