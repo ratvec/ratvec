@@ -17,7 +17,7 @@ Also see https://click.pocoo.org/latest/setuptools/
 
 import click
 
-from ratvec.evaluation import main as evaluate
+from ratvec.evaluation_pIC50 import main as evaluate
 from ratvec.protein_seq_reader import main as generate
 from ratvec.train import main as train, infer
 

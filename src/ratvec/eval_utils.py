@@ -9,11 +9,11 @@ from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 
 __all__ = [
-    'plos_cross_val_score',
+    'knn_cross_val_score',
 ]
 
 
-def plos_cross_val_score(n_components: int, n_neighbors: int, x, y):
+def knn_cross_val_score(n_components: int, n_neighbors: int, x, y):
     idx = np.arange(len(y))
     random.shuffle(idx)
     clf = KNeighborsClassifier(n_neighbors=n_neighbors)

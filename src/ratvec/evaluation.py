@@ -13,7 +13,7 @@ import numpy as np
 from tqdm import tqdm
 
 from ratvec.constants import EMOJI
-from ratvec.eval_utils import plos_cross_val_score
+from ratvec.eval_utils import knn_cross_val_score
 from ratvec.utils import make_balanced, make_ratvec, secho
 
 __all__ = [
@@ -159,7 +159,7 @@ def _sub_run_evaluation(
     for reduced_n_components in it:
         n_neighbors = 1
         partial_eval_function = partial(
-            plos_cross_val_score,
+            knn_cross_val_score,
             reduced_n_components,
             n_neighbors,
         )
@@ -182,7 +182,7 @@ def _sub_run_evaluation(
     it = tqdm(range(1, max_neighbors), desc=f'{EMOJI} Optimizing number of neighbors')
     for n_neighbors in it:
         partial_eval_function = partial(
-            plos_cross_val_score,
+            knn_cross_val_score,
             best_number_components,
             n_neighbors,
         )
