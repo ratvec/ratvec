@@ -28,7 +28,7 @@ __all__ = [
 
 @click.command()
 @click.option('-r', '--ratvec_directory', required=True, help='Path to output directory (RatVec embeddings)')
-@click.option('-a', '--activities_directory', required=True, help='Path to training data (processed.tsv and smiles.txt)')
+@click.option('-a', '--activities_directory', required=True, help='Path to training data (processed.tsv and labels.txt)')
 def main(
         ratvec_directory,
         activities_directory,
@@ -39,7 +39,7 @@ def main(
         optim_dir = os.path.join(ratvec_directory, 'optim')
         os.makedirs(optim_dir, exist_ok=True)
 
-        smiles_dir = os.path.join(activities_directory, 'smiles.txt')
+        smiles_dir = os.path.join(activities_directory, 'labels.txt')
         smiles_list = [l[:-1] for l in open(smiles_dir, "r")]
 
         activities_dir = os.path.join(activities_directory, 'processed.tsv')
