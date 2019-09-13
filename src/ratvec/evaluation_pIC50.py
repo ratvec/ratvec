@@ -70,7 +70,7 @@ def make_datasets(activities_df, smiles2vec):
     proteins = []
     for protein in activities_df.NAME.unique():
         protein_df = activities_df[ activities_df["NAME"] == protein]
-        y = (protein_df["STANDARD_VALUE"] >= ACTIVITY_THRESHOLD).values
+        y = protein_df["Active"]
         total_count = len(y)
         pos_count = np.sum(y)
         neg_count = total_count - pos_count
@@ -91,7 +91,7 @@ def _run_evaluation(
         activities_df,
         subdirectory,
         n_components = 20,
-        max_neighbors=11,
+        max_neighbors=21,
         pool,
 ) -> None:
     kpca = os.path.join(subdirectory, 'kpca.npy')
@@ -110,7 +110,7 @@ def _run_evaluation(
         range(
             number_components_low,
             number_components_high,
-            max(1, int(np.floor((number_components_high - number_components_low) ))),
+            max(1, int(np.floor((number_components_high - number_components_low)/20 ))),
         ),
         desc=f'{EMOJI} Optimizing number of components',
     )
