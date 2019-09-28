@@ -9,7 +9,7 @@ Citation
 --------
 If you find RatVec useful in your work, please consider citing:
 
-.. [1] Brito, E., *et al.*: RatVec: A General Approach for Low-dimensional Distributed Vector Representations via Rational Kernels. In: LWDA 2019.
+.. [1] Brito, E., *et al.*: RatVec: A General Approach for Low-dimensional Distributed Vector Representations via Rational Kernels. In: `LWDA 2019 <http://ceur-ws.org/Vol-2454/paper_15.pdf>`_.
 
 Installation |pypi_version| |python_versions| |pypi_license|
 ------------------------------------------------------------
