@@ -5,6 +5,12 @@ text or biological sequences (e.g. DNA or proteins) via kernel PCA with rational
 
 The current implementation accepts any input dataset that can be read as a list of strings.
 
+Citation
+--------
+If you find RatVec useful in your work, please consider citing:
+
+.. [1] Brito, E., *et al.*: RatVec: A General Approach for Low-dimensional Distributed Vector Representations via Rational Kernels. In: LWDA 2019.
+
 Installation |pypi_version| |python_versions| |pypi_license|
 ------------------------------------------------------------
 RatVec can be installed on Python 3.6+ from `PyPI <https://pypi.python.org/pypi/ratvec>`_ with the following code in
