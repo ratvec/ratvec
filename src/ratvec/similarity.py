@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 try:
     import pyximport
 
-    pyximport.install()
+    pyximport.install(language_level=3)
     from ratvec.similarity_fast import n_gram_sim_list, ngram_sim
 except ImportError:
     logger.info('falling back to pure python implementation of n_gram_sim and n_gram_sim_list')
