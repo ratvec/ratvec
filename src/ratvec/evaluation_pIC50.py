@@ -12,19 +12,16 @@ import click
 import numpy as np
 from tqdm import tqdm
 
-from ratvec.constants import EMOJI
+from ratvec.constants import EMOJI, MIN_CLASS_SAMPLES
 from ratvec.eval_utils import knn_cross_val_score
 from ratvec.utils import make_balanced, make_ratvec, secho
 
 import pandas as pd
 
-ACTIVITY_THRESHOLD = 7.5
-
 
 __all__ = [
     'main',
 ]
-
 
 @click.command()
 @click.option('-r', '--ratvec_directory', required=True, help='Path to output directory (RatVec embeddings)')
@@ -70,11 +67,11 @@ def make_datasets(activities_df, smiles2vec):
     proteins = []
     for protein in activities_df.NAME.unique():
         protein_df = activities_df[ activities_df["NAME"] == protein]
-        y = protein_df["Active"]
+        y = protein_df["Active"].values
         total_count = len(y)
         pos_count = np.sum(y)
         neg_count = total_count - pos_count
-        if pos_count < 10 or neg_count < 10: #Each class at least 10 elements
+        if pos_count < MIN_CLASS_SAMPLES or neg_count < MIN_CLASS_SAMPLES: #Each class at least 10 elements
             continue
         #x = protein_df["SMILES"].replace(smiles2vec).values
         x = np.array([smiles2vec[s] for s in protein_df["SMILES"]])
@@ -82,6 +79,7 @@ def make_datasets(activities_df, smiles2vec):
         counts.append(total_count)
         datasets.append((x,y))
         print(f"{pos_count}+\t{neg_count}-\t{pos_count/total_count}")
+
     return datasets, counts, proteins
 
 
@@ -90,8 +88,8 @@ def _run_evaluation(
         smiles_list,
         activities_df,
         subdirectory,
-        n_components = 20,
-        max_neighbors=21,
+        n_components = 100,
+        max_neighbors=19,
         pool,
 ) -> None:
     kpca = os.path.join(subdirectory, 'kpca.npy')
