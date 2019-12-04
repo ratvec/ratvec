@@ -23,6 +23,7 @@ SEQUENCES_DOWNLOAD_URL = 'https://dataverse.harvard.edu/api/access/datafile/2712
 
 EMOJI = '🐀'
 
+MIN_CLASS_SAMPLES = 50
 
 def make_data_directory():
     """Ensure that the data directory exists."""

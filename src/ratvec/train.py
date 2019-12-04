@@ -7,7 +7,6 @@ import json
 import logging
 import multiprocessing
 import os
-import pickle
 from functools import partial
 from math import ceil
 from typing import Any, Callable, List
@@ -51,11 +50,13 @@ ALLOWED_SIMILARITIES = [
 ]
 
 
-def _preprocess_vocab_file(f):
+def _preprocess_vocab_file(f, sep):
     return [
-        normalize_word(w[:-1])
-        for w in f
-        if 1 == len(w[:-1].split())
+        #normalize_word(w[:-1])
+        #for w in f
+        #if 1 == len(w[:-1].split(set))
+        l.split(sep)
+        for l in f
     ]
 
 
@@ -79,6 +80,8 @@ def _preprocess_vocab_file(f):
               help="Similarity matrix to use with --sim==global-alignment")
 @click.option('-n', '--n-ngram', type=int, default=2, show_default=True,
               help="Size of the n-grams when n-gram similarity function is used (default: 2)")
+@click.option('-s', '--sep', type=str, default=None, show_default=True,
+              help="Separator of sequence elements d (default: "")")
 @click.option('--use-gpu', is_flag=True)
 @click.option('--processes', type=int, default=multiprocessing.cpu_count(), show_default=True,
               help="Number of processes to be started for computation")
@@ -90,6 +93,7 @@ def main(
         sim: str,
         sim_alignment_matrix: str,
         n_ngram: int,
+        sep: str,
         use_gpu: bool,
         processes: int,
 ) -> None:
@@ -98,13 +102,12 @@ def main(
     output = os.path.abspath(output)
     os.makedirs(output, exist_ok=True)
 
-    full_vocab = _preprocess_vocab_file(full_vocab_file)
+    full_vocab = _preprocess_vocab_file(full_vocab_file,sep)
 
     if repr_vocab_file is None:
         repr_vocab = full_vocab
     else:
-        repr_vocab = _preprocess_vocab_file(repr_vocab_file)
-
+        repr_vocab = _preprocess_vocab_file(repr_vocab_file,sep)
     params_path = os.path.join(output, 'training_manifest.json')
     secho(f'Outputting training information to {params_path}')
     manifest = dict(
@@ -142,11 +145,16 @@ def main(
     else:
         alphabet = set(itt.chain.from_iterable(repr_vocab))
         alphabet.add(" ")
-
-        ngram_to_index = {
-            ngram: i
-            for i, ngram in enumerate(["".join(t) for t in itt.product(alphabet, repeat=n)])
-        }
+        if sep is not None:
+            ngram_to_index = {
+                ngram: i
+                for i, ngram in enumerate([t for t in itt.product(alphabet, repeat=n)])
+            }
+        else:
+            ngram_to_index = {
+                ngram: i
+                for i, ngram in enumerate(["".join(t) for t in itt.product(alphabet, repeat=n)])
+            }
 
         if sim == "ngram_intersec":
             secho(f'Computing n-gram sparse similarities with {sim}')
@@ -189,7 +197,6 @@ def main(
 
     optim_folder = os.path.join(output, 'optim')
     os.makedirs(optim_folder, exist_ok=True)
-
     if n_components is None:
         n_components = int(0.5 + len(repr_vocab) * 2 / 3)
 
@@ -235,10 +242,8 @@ def infer(
     """Load pre-computed similarity matrix."""
     secho(f"Loading the repr similarity matrix for the full vocabulary to {repr_sim_matrix_file}")
     repr_similarity_matrix = np.load(repr_sim_matrix_file)
-
     secho(f"Loading the full similarity matrix for the full vocabulary to {full_sim_matrix_file}")
     full_similarity_matrix = np.load(full_sim_matrix_file)
-
     optim_folder = os.path.join(output, 'optim')
     os.makedirs(optim_folder, exist_ok=True)
 
@@ -299,10 +304,10 @@ def optimize_projections(
             for i in range(1, n_components + 1)
         ])
         # Save Alphas
-        _alphas_path = os.path.join(param_folder, f"alphas.p")
+        _alphas_path = os.path.join(param_folder, f"alphas.npy")
         secho(f"({kernel_name}/{hyperparam}) outputting alphas to {_alphas_path}")
         with open(_alphas_path, "wb") as file:
-            pickle.dump(repr_alphas, file)
+            np.save(file, repr_alphas)
 
         # Calculate lambdas
         repr_lambdas = [
@@ -310,10 +315,10 @@ def optimize_projections(
             for i in range(1, n_components + 1)
         ]
         # Save lambdas
-        _lambdas_path = os.path.join(param_folder, f"lambdas.p")
+        _lambdas_path = os.path.join(param_folder, f"lambdas.npy")
         secho(f"({kernel_name}/{hyperparam}) outputting lambdas to {_lambdas_path}")
         with open(_lambdas_path, 'wb') as file:
-            pickle.dump(repr_lambdas, file)
+            np.save(file, repr_lambdas)
 
         secho(f"({kernel_name}/{hyperparam}) projecting known vocabulary to KPCA embeddings")
         repr_projection_matrix = repr_alphas / repr_lambdas
@@ -496,7 +501,7 @@ def compute_similarity_matrix_ngram_sparse(
 
     it_3 = range(len(V_ng))
     if use_tqdm:
-        it_3 = tqdm(it_3, desc=f"{EMOJI} Compute normalization matrix with maximum number of n-grams for the proteins")
+        it_3 = tqdm(it_3, desc=f"{EMOJI} Compute normalization matrix with maximum number of n-grams for the sequences")
     for i in it_3:
         for j in range(len(R_ng)):
             L[i, j] = max(V_ng[i], R_ng[j])

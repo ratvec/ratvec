@@ -25,9 +25,14 @@ __all__ = [
 ]
 
 
-def ngrams(s: str, n: int) -> List[str]:
-    """Generate n-grams on the given string."""
-    string = " " + s + " "
+def ngrams(s, n: int) -> List[str]:
+    """Generate n-grams on the given string or list."""
+    if type(s) == str:
+        string = " " + s + " "
+    elif type(s) == list:
+        string = tuple([" "]) + tuple(s) + tuple([" "])
+    else:
+        raise TypeError("can only handle sequences as str or list")
     return [
         string[i:i + n]
         for i in range(len(string) - n + 1)
