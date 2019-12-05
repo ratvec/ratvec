@@ -18,6 +18,7 @@ Also see https://click.pocoo.org/latest/setuptools/
 import click
 
 from ratvec.evaluation import main as evaluate
+from ratvec.evaluation_clin30 import main as evaluate_clin30
 from ratvec.protein_seq_reader import main as generate
 from ratvec.train import main as train, infer
 
@@ -26,6 +27,7 @@ main = click.Group(commands={
     'train': train,
     'infer': infer,
     'evaluate': evaluate,
+    'evaluate_clin30': evaluate_clin30,
 })
 
 if __name__ == '__main__':

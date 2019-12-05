@@ -5,11 +5,11 @@
 import json
 import multiprocessing
 import os
-import pickle
 from functools import partial
 
 import click
 import numpy as np
+from sklearn.utils import shuffle
 from tqdm import tqdm
 
 from ratvec.constants import EMOJI
@@ -22,98 +22,56 @@ __all__ = [
 
 
 @click.command()
-@click.option('-l', '--family-labels', type=click.File('r'), help='Path to family labels', required=True)
 @click.option('-d', '--directory', required=True, help='Path to output directory')
 @click.option('-c', '--n-components', type=int, default=100)
 @click.option('-n', '--max-neighbors', type=int, default=15)
 @click.option('--n-iterations', type=int, default=100)
-@click.option('--no-save-dataset', is_flag=True)
-@click.option('--load-dataset', is_flag=True)
+
+
 def main(
-        family_labels,
         directory,
         n_components: int,
         max_neighbors: int,
         n_iterations: int,
-        no_save_dataset: bool,
-        load_dataset: bool,
 ) -> None:
     """Evaluate KPCA embeddings."""
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        if load_dataset:
-            click.echo('Loading balanced datasets')
-            subdirectory = os.path.dirname(family_labels.name)
-            with open(family_labels.name + "_balanced", "rb") as file:
-                balanced_datasets, counts = pickle.load(file)
-                _sub_run_evaluation(
-                    balanced_datasets=balanced_datasets,
-                    counts=counts,
-                    n_components=n_components,
-                    n_iterations=n_iterations,
-                    max_neighbors=max_neighbors,
-                    pool=pool,
-                    subdirectory=subdirectory,
-                )
-        else:
-            secho(f'Loading family labels file: {family_labels}')
-            y = np.array([
-                l[:-1]
-                for l in family_labels
-            ])
 
-            optim_dir = os.path.join(directory, 'optim')
-            os.makedirs(optim_dir, exist_ok=True)
 
-            secho(f'Dynamically generating balanced datasets from {optim_dir}')
-            for subdirectory_name in os.listdir(optim_dir):
-                subdirectory = os.path.join(optim_dir, subdirectory_name)
-                if not os.path.isdir(subdirectory):
-                    continue
-                secho(f'Handling {subdirectory}')
-                _run_evaluation(
-                    y=y,
-                    save_dataset=(not no_save_dataset),
-                    family_labels=family_labels,
-                    n_components=n_components,
-                    n_iterations=n_iterations,
-                    max_neighbors=max_neighbors,
-                    pool=pool,
-                    subdirectory=subdirectory,
-                )
+
+
+
+        optim_dir = os.path.join(directory, 'optim')
+        os.makedirs(optim_dir, exist_ok=True)
+
+        for subdirectory_name in os.listdir(optim_dir):
+            subdirectory = os.path.join(optim_dir, subdirectory_name)
+            if not os.path.isdir(subdirectory):
+                continue
+            secho(f'Handling {subdirectory}')
+
+
+            kpca = os.path.join(subdirectory, 'kpca.npy')
+            secho(f'Loading embeddings file: {kpca}')
+            X = np.load(kpca)
+            n_pos_seqs = int(X.shape[0]/2)
+            n_neg_seqs = n_pos_seqs
+            y = np.array(n_pos_seqs * [True] + n_neg_seqs* [False])
+
+            balanced_datasets = [(X,y)]
+            counts = [len(y)]
+
+            _sub_run_evaluation(
+                balanced_datasets=balanced_datasets,
+                counts=counts,
+                n_components=n_components,
+                n_iterations=n_iterations,
+                max_neighbors=max_neighbors,
+                pool=pool,
+                subdirectory=subdirectory,
+            )
 
     secho(f"done. Enjoy your {make_ratvec(3)}")
-
-
-def _run_evaluation(
-        *,
-        y,
-        save_dataset,
-        family_labels,
-        n_components,
-        n_iterations,
-        max_neighbors,
-        pool,
-        subdirectory,
-) -> None:
-    kpca = os.path.join(subdirectory, 'kpca.npy')
-    secho(f'Loading embeddings file: {kpca}')
-    x = np.load(kpca)
-
-    balanced_datasets, counts = make_balanced(x, y)
-    if save_dataset:
-        family_labels_balanced_path = os.path.join(subdirectory, family_labels.name + "_balanced")
-        with open(family_labels_balanced_path, "wb") as file:
-            pickle.dump((balanced_datasets, counts), file)
-
-    _sub_run_evaluation(
-        balanced_datasets=balanced_datasets,
-        counts=counts,
-        n_components=n_components,
-        n_iterations=n_iterations,
-        max_neighbors=max_neighbors,
-        pool=pool,
-        subdirectory=subdirectory,
-    )
 
 
 def _sub_run_evaluation(
