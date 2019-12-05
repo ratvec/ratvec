@@ -18,7 +18,7 @@ from scipy.linalg import eigh
 from scipy.sparse import dok_matrix
 from tqdm import tqdm
 
-from ratvec.constants import EMOJI
+from ratvec.constants import EMOJI, UNKNOWN_NGRAM
 from ratvec.kernel_utils import KERNEL_TO_PROJECTION
 from ratvec.utils import make_ratvec, ngrams, normalize_kernel_matrix, normalize_word, secho
 
@@ -144,17 +144,19 @@ def main(
         )
     else:
         alphabet = set(itt.chain.from_iterable(repr_vocab))
-        alphabet.add(" ")
+
         if sep is not None:
             ngram_to_index = {
                 ngram: i
                 for i, ngram in enumerate([t for t in itt.product(alphabet, repeat=n)])
             }
         else:
+            alphabet.add(" ")
             ngram_to_index = {
                 ngram: i
                 for i, ngram in enumerate(["".join(t) for t in itt.product(alphabet, repeat=n)])
             }
+        ngram_to_index[UNKNOWN_NGRAM] = len(ngram_to_index)
 
         if sim == "ngram_intersec":
             secho(f'Computing n-gram sparse similarities with {sim}')
@@ -388,7 +390,7 @@ def get_ngram_elements(*, repr_vocab, full_vocab, n: int, ngram_to_index):
 def _get_ngram_elements_helper(strings, *, ngram_to_index, n: int, desc=None):
     return [
         [
-            ngram_to_index[t]
+            ngram_to_index[t] if t in ngram_to_index else ngram_to_index[UNKNOWN_NGRAM]
             for t in ngrams(string, n)
         ]
         for string in tqdm(strings, desc=desc)
