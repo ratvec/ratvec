@@ -53,10 +53,7 @@ ALLOWED_SIMILARITIES = [
 
 def _preprocess_vocab_file(f, sep):
     return [
-        #normalize_word(w[:-1])
-        #for w in f
-        #if 1 == len(w[:-1].split(set))
-        l.split(sep)
+        [" "] + l[:-1].split(sep) + [" "]
         for l in f
     ]
 
