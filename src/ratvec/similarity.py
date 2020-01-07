@@ -4,10 +4,13 @@ import logging
 
 from ratvec.similarity_slow import global_alignment_similarity
 
+
 __all__ = [
     'n_gram_sim_list',
     'ngram_sim',
     'global_alignment_similarity',
+    'p_spectrum',
+    'sim_func_sim_list'
 ]
 
 logger = logging.getLogger(__name__)
@@ -16,7 +19,7 @@ try:
     import pyximport
 
     pyximport.install(language_level=3)
-    from ratvec.similarity_fast import n_gram_sim_list, ngram_sim
+    from ratvec.similarity_fast import n_gram_sim_list, ngram_sim, p_spectrum, sim_func_sim_list
 except ImportError:
     logger.info('falling back to pure python implementation of n_gram_sim and n_gram_sim_list')
-    from ratvec.similarity_slow import n_gram_sim_list, ngram_sim
+    from ratvec.similarity_slow import n_gram_sim_list, ngram_sim, p_spectrum, sim_func_sim_list

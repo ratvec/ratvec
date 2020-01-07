@@ -47,6 +47,7 @@ ALLOWED_SIMILARITIES = [
     # "sorensen_plus",  # TODO where did the implementation for this go
     "ngram_intersec",
     'global-alignment',
+    'p_spectrum'
 ]
 
 
@@ -172,13 +173,14 @@ def main(
                 ngram_to_index=ngram_to_index,
                 n=n,
             )
-        else:  # sim == 'ngram_sim'
+        else:  # sim == 'ngram_sim' or 'p_spectrum'
             secho(f'Computing n-gram similarities with {sim}')
             repr_similarity_matrix = compute_similarity_matrix_ngram_parallel(
                 full_vocab=repr_vocab,
                 repr_vocab=repr_vocab,
                 n=n,
                 ngram_to_index=ngram_to_index,
+                sim_func=sim,
                 processes=processes,  # Extra because this gets multi-processed
             )
             full_similarity_matrix = compute_similarity_matrix_ngram_parallel(
@@ -186,6 +188,7 @@ def main(
                 repr_vocab=repr_vocab,
                 n=n,
                 ngram_to_index=ngram_to_index,
+                sim_func=sim,
                 processes=processes,  # Extra because this gets multi-processed
             )
 
@@ -404,6 +407,7 @@ def compute_similarity_matrix_ngram_parallel(
         processes,
         n,
         ngram_to_index,
+        sim_func
 ) -> np.ndarray:
     """
 
@@ -414,7 +418,9 @@ def compute_similarity_matrix_ngram_parallel(
     :param ngram_to_index:
     :return:
     """
-    from ratvec.similarity import n_gram_sim_list
+    #from ratvec.similarity import n_gram_sim_list
+    from ratvec.similarity import sim_func_sim_list,n_gram_sim_list
+
 
     secho(f"Splitting data for computing similarities in {processes} processes")
     elements = get_ngram_elements(
@@ -423,7 +429,10 @@ def compute_similarity_matrix_ngram_parallel(
         ngram_to_index=ngram_to_index,
         n=n,
     )
-    compute_similarities_on_splits = partial(n_gram_sim_list, n_ngram=n)
+
+    compute_similarities_on_splits = partial(sim_func_sim_list, n_ngram=n, func=sim_func)
+    #compute_similarities_on_splits = partial(n_gram_sim_list, n_ngram=n)
+
     return _calculate_similarity_matrix_parallel(
         full_vocab=full_vocab,
         repr_vocab=repr_vocab,

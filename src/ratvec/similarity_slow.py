@@ -3,6 +3,7 @@
 """Pure python implementations of similarity functions."""
 
 from functools import partial
+from collections import Counter
 
 import Bio.SubsMat.MatrixInfo
 import numpy as np
@@ -51,3 +52,23 @@ def global_alignment_similarity(x: str, y: str, matrix: str = 'blosum62') -> flo
     """Give a score based on global pairwise alignment."""
     m = getattr(Bio.SubsMat.MatrixInfo, matrix)
     return 1 / (1 + pairwise2.align.globaldx(x, y, m, score_only=True))
+
+
+def p_spectrum(x, y, p: int = 2) -> float:
+    """Hashmap algorithm for p-spectrum similarity."""
+    ng_a = ngrams(x, p)
+    ng_b = ngrams(y, p)
+
+    x_count = Counter(ng_a)
+    y_count = Counter(ng_b)
+
+    return np.sum([x_count[k] * y_count[k] for k in x_count.keys()])
+
+
+def sim_func_sim_list(tuples, n_ngram: int = 2, func=ngram_sim) -> float:
+    """Computes the a similarity function on a list of tuples	"""
+    f = partial(func, n_ngram)
+    return [
+        f(x, y)
+        for x, y in tuples
+    ]
